@@ -37,7 +37,7 @@ jobs:
           bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'"
 
   build:
-    if: ! always()
+    if: false
     runs-on: ubuntu-latest
     permissions:
       contents: read

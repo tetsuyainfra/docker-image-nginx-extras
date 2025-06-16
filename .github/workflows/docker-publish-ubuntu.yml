@@ -28,13 +28,13 @@ jobs:
     steps:
       - name: check file version policy
         run: >-
-          apt-get update > /dev/null &&
-          apt-cache policy nginx
+          docker run --rm ubuntu:24.04
+          bash -c "apt update > /dev/null && apt-cache policy nginx"
 
       - name: check file version
         run: >-
-          apt-get update > /dev/null &&
-          apt-cache policy nginx | grep Candidate | awk '{ print $2 }'
+          docker run --rm ubuntu:24.04
+          bash -c "apt update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print $2 }'"
 
   build:
     runs-on: ubuntu-latest

@@ -29,14 +29,15 @@ jobs:
       - name: check file version policy
         run: >-
           docker run --rm ubuntu:24.04
-          bash -c "apt update > /dev/null && apt-cache policy nginx"
+          bash -c "apt-get update > /dev/null && apt-cache policy nginx"
 
       - name: check file version
         run: >-
           docker run --rm ubuntu:24.04
-          bash -c "apt update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print $2 }'"
+          bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'"
 
   build:
+    if: ! always()
     runs-on: ubuntu-latest
     permissions:
       contents: read

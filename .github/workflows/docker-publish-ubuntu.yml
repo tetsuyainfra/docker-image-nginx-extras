@@ -23,6 +23,19 @@ env:
 
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check file version policy
+        run: >-
+          apt-get update > /dev/null &&
+          apt-cache policy nginx
+
+      - name: check file version
+        run: >-
+          apt-get update > /dev/null &&
+          apt-cache policy nginx | grep Candidate | awk '{ print $2 }'
+
   build:
     runs-on: ubuntu-latest
     permissions:

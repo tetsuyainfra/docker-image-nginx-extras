@@ -10,7 +10,6 @@ RUN apt-get update && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
-COPY default.conf /etc/nginx/conf.d/
 COPY --from=nginx:bookworm docker-entrypoint.sh /
 COPY --from=nginx:bookworm /docker-entrypoint.d /docker-entrypoint.d
 

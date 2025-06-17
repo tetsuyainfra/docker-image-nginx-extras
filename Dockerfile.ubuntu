@@ -1,11 +1,11 @@
 ARG DOCKER_BASE_IMAGE
-FROM ${DOCKER_BASE_IMAGE}
+FROM $DOCKER_BASE_IMAGE
 
 ARG INSTALL_PACKAGES
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    DEBIAN_FRONTEND="noninteractive" apt-get -y install --no-install-recommends ${INSTALL_PACKAGES} && \
+    DEBIAN_FRONTEND="noninteractive" apt-get -y install --no-install-recommends $INSTALL_PACKAGES && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     # link for logging

@@ -26,37 +26,46 @@ env:
 jobs:
   check:
     runs-on: ubuntu-latest
+    outputs:
+      need_build: ${{ steps.cache_hit.outputs.result }}
     steps:
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: ~/pkg-version
-          key: pkg-version-ubuntu
-
-      - name: Read last_nginx version
-        id: last_pkg_version
-        run: |
-          last_nginx=$(cat ~/pkg-version 2>/dev/null || true)
-          echo nginx=${last_nginx}
-          echo nginx=${last_nginx} >> $GITHUB_OUTPUT
+      # - name: Read last_nginx version
+      #   id: last_pkg_version
+      #   run: |
+      #     last_nginx=$(cat ~/pkg-version 2>/dev/null || true)
+      #     echo nginx=${last_nginx}
+      #     echo nginx=${last_nginx} >> $GITHUB_OUTPUT
 
       - name: check file version and save version to latest
         id: latest_pkg_version
         run: |
-          cat ~/pkg-version 2>/dev/null || true
-          nginx=$(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'")
-          echo "nginx=${nginx}"
-          echo "nginx=${nginx}" >> $GITHUB_OUTPUT
-          echo "${nginx}" > ~/pkg-version
-          cat ~/pkg-version 2>/dev/null || true
+          $(docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='${binary:Package} ${Version}\n'" > ~/pkg-version
+          $(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'") >> ~/pkg-version
+          cat ~/latest-pkg-version
 
-      - name: compare the latest and last checked version
-        run: |
-          echo "last  : ${{ steps.last_pkg_version.outputs.nginx   }}"
-          echo "latest: ${{ steps.latest_pkg_version.outputs.nginx }}"
+      - name: Restore cache
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ~/pkg-version
+          key: pkg-version-ubuntu-${{ hashFiles('~/latest-pkg-version') }}
+
+      # キャッシュヒットしなかった → 古いバージョン
+      - name: Cache hit
+        if: steps.cache.outputs.cache-hit != 'true'
+        id: cache_hit
+        run:
+          cp ~/latest-pkg-version ~/pkg-version
+          echo result=true >> $GITHUB_OUTPUT
+
+      # キャッシュヒットした → 同じバージョン
+      # - name: Cache hit
+      #   if: steps.cache.outputs.cache-hit == 'true'
+
 
   build:
-    if: false
+    needs: check
+    if: needs.check.outputs.need_build == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

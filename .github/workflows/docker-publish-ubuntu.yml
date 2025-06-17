@@ -39,8 +39,10 @@ jobs:
       - name: check file version and save version to latest
         id: latest_pkg_version
         run: |
-          $(docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='\${binary:Package} \${Version}\n'") > ~/pkg-version
-          $(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'") >> ~/pkg-version
+          docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='\${binary:Package} \${Version}\n'"
+          docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'"
+          # $(docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='\${binary:Package} \${Version}\n'") > ~/pkg-version
+          # $(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'") >> ~/pkg-version
           cat ~/latest-pkg-version
 
       - name: Restore cache

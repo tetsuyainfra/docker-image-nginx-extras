@@ -14,7 +14,12 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-
+  DOCKER_BASE_IMAGE: ubuntu:24.04
+  INSTALL_PACKAGES: >-
+    nginx
+    nginx-extras
+    libnginx-mod-http-js
+    libnginx-mod-stream-js
 
 jobs:
   check:
@@ -118,6 +123,8 @@ jobs:
         with:
           context: .
           file: Dockerfile.ubuntu
+          build-args: |
+             INSTALL_PACKAGE="${{ env.INSTALL_PACKAGES }}"
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

@@ -1,9 +1,11 @@
-FROM ubuntu:24.04
+ARG DOCKER_BASE_IMAGE=ubuntu:24.04
+FROM ${DOCKER_BASE_IMAGE}
+
+ARG INSTALL_PACKAGES="nginx"
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    DEBIAN_FRONTEND="noninteractive" apt-get -y install --no-install-recommends \
-        nginx nginx-extras ca-certificates gettext-base curl && \
+    DEBIAN_FRONTEND="noninteractive" apt-get -y install --no-install-recommends ${INSTALL_PACKAGES} && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     # link for logging

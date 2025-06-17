@@ -124,7 +124,7 @@ jobs:
           context: .
           file: Dockerfile.ubuntu
           build-args: |
-             INSTALL_PACKAGE="${{ env.INSTALL_PACKAGES }}"
+             INSTALL_PACKAGES="${{ env.INSTALL_PACKAGES }}"
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

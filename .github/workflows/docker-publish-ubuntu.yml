@@ -33,9 +33,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: check file version and save version to latest
-        id: latest_pkg_version
+        id: latest_pkg_versions
         run: |
           ./.github/scripts/show-install-apt.sh > ~/latest-pkg-version
+          hash=$(sha1sum ~/latest-pkg-version | awk '{ print $1 }')
+          echo hash=${hash}
+          echo hash=${hash} >> $GITHUB_OUTPUT
           cat ~/latest-pkg-version
 
       # - name: check file version and save version to latest
@@ -51,7 +54,7 @@ jobs:
         id: cache
         with:
           path: ~/pkg-version
-          key: pkg-version-ubuntu-${{ hashFiles('~/latest-pkg-version') }}
+          key: pkg-version-ubuntu-${{ steps.latest_pkg_versions.outputs.hash }}
 
       # キャッシュヒットしなかった → 古いバージョン
       - name: Cache hit

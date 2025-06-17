@@ -40,7 +40,8 @@ jobs:
         id: latest_pkg_version
         run: |
           docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='\${binary:Package} \${Version}\n'" > ~/latest-pkg-version
-          docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'" >> ~/latest-pkg-version
+          nginx=$(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'")
+          echo nginx: ${nginx} >> ~/latest-pkg-version
           cat ~/latest-pkg-version
 
       - name: Restore cache
@@ -54,7 +55,7 @@ jobs:
       - name: Cache hit
         if: steps.cache.outputs.cache-hit != 'true'
         id: cache_hit
-        run:
+        run: |
           cp ~/latest-pkg-version ~/pkg-version
           echo result=true >> $GITHUB_OUTPUT
 

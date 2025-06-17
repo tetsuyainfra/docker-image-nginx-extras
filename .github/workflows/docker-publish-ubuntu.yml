@@ -29,20 +29,21 @@ jobs:
     outputs:
       need_build: ${{ steps.cache_hit.outputs.result }}
     steps:
-      # - name: Read last_nginx version
-      #   id: last_pkg_version
-      #   run: |
-      #     last_nginx=$(cat ~/pkg-version 2>/dev/null || true)
-      #     echo nginx=${last_nginx}
-      #     echo nginx=${last_nginx} >> $GITHUB_OUTPUT
+      - name: check out repository
+        uses: actions/checkout@v4
 
       - name: check file version and save version to latest
         id: latest_pkg_version
         run: |
-          docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='\${binary:Package} \${Version}\n'" > ~/latest-pkg-version
-          nginx=$(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'")
-          echo nginx: ${nginx} >> ~/latest-pkg-version
-          cat ~/latest-pkg-version
+          ./.github/scripts/show-install-apt.sh > ~/latest-pkg-version
+
+      # - name: check file version and save version to latest
+      #   id: latest_pkg_version
+      #   run: |
+      #     docker run --rm ubuntu:24.04 bash -c "dpkg-query -W -f='\${binary:Package} \${Version}\n'" > ~/latest-pkg-version
+      #     nginx=$(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'")
+      #     echo nginx: ${nginx} >> ~/latest-pkg-version
+      #     cat ~/latest-pkg-version
 
       - name: Restore cache
         uses: actions/cache@v4

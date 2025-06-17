@@ -43,10 +43,12 @@ jobs:
       - name: check file version and save version to latest
         id: latest_pkg_version
         run: |
+          cat ~/pkg-version 2>/dev/null || true
           nginx=$(docker run --rm ubuntu:24.04 bash -c "apt-get update > /dev/null && apt-cache policy nginx | grep Candidate | awk '{ print \$2 }'")
           echo "nginx=${nginx}"
           echo "nginx=${nginx}" >> $GITHUB_OUTPUT
           echo "${nginx}" > ~/pkg-version
+          cat ~/pkg-version 2>/dev/null || true
 
       - name: compare the latest and last checked version
         run: |

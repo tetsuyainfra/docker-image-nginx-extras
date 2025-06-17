@@ -36,6 +36,7 @@ jobs:
         id: latest_pkg_version
         run: |
           ./.github/scripts/show-install-apt.sh > ~/latest-pkg-version
+          cat ~/latest-pkg-version
 
       # - name: check file version and save version to latest
       #   id: latest_pkg_version

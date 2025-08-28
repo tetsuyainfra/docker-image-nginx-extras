@@ -1,7 +1,7 @@
-ARG DOCKER_BASE_IMAGE
+ARG DOCKER_BASE_IMAGE=debian:trixie
 FROM $DOCKER_BASE_IMAGE
 
-ARG INSTALL_PACKAGES
+ARG INSTALL_PACKAGES="nginx nginx-extras libnginx-mod-http-js libnginx-mod-stream-js"
 
 RUN set -eux; \
         env ; \
